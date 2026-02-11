@@ -27,7 +27,7 @@ public class VehicleImage {
     private int displayOrder;
 
     @Column(nullable = false)
-    private boolean primary = false;
+    private boolean primaryPhoto = false;
 
     @CreationTimestamp
     @Column(updatable = false)
