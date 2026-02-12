@@ -57,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Set the TenantContext so the rest of the app knows which dealership
             // this request belongs to. This is used by Hibernate filters to scope queries.
-            TenantContext.setTenantId(claims.get("dealershipId", String.class));
+            TenantContext.setDealershipId(claims.get("dealershipId", String.class));
 
             // Create a Spring Security authentication token.
             // - principal (arg 1): the userId from the JWT subject — identifies WHO is making the request
