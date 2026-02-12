@@ -17,6 +17,8 @@ public interface DealershipRepository extends JpaRepository<Dealership, String> 
      */
     Optional<Dealership> findByEmail(String email);
 
+    Optional<Dealership> findBySlug(String slug);
+
     /**
      *  Check if email exist for validation
      */

@@ -55,9 +55,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Only set authentication if no one else has already authenticated this request
         if (claims != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            // Set the TenantContext so the rest of the app knows which dealership
-            // this request belongs to. This is used by Hibernate filters to scope queries.
-            TenantContext.setDealershipId(claims.get("dealershipId", String.class));
+            String jwtDealershipId = claims.get("dealershipId", String.class);
+
+            // Security check: if the SubdomainTenantFilter already resolved a dealership
+            // from the subdomain, verify it matches the one in the JWT.
+            // This prevents an admin of dealership A from using their token on
+            // dealership B's subdomain (e.g. acme-motors admin hitting best-cars.autolot.com/api/admin/...)
+            String subdomainDealershipId = TenantContext.getDealershipId();
+            if (subdomainDealershipId != null && !subdomainDealershipId.equals(jwtDealershipId)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Token does not match this dealership");
+                return;
+            }
+
+            // Set the TenantContext from the JWT (overrides or sets for the first time)
+            TenantContext.setDealershipId(jwtDealershipId);
 
             // Create a Spring Security authentication token.
             // - principal (arg 1): the userId from the JWT subject — identifies WHO is making the request

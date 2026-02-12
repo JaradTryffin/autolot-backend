@@ -7,7 +7,7 @@ public class TenantContext {
         dealershipId.set(id);
     }
 
-    public static String getTenantId(){
+    public static String getDealershipId(){
         return dealershipId.get();
     }
 
