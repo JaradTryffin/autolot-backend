@@ -2,7 +2,9 @@ package com.autolot.autolotbackend.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class SiteConfig extends TenantScoped {
     private String id;
 
     @Column(nullable = false, columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String layoutJson;
 
     @Column(nullable = false)
