@@ -1,5 +1,7 @@
 package com.autolot.autolotbackend.service.auth;
 
+import com.autolot.autolotbackend.exception.DuplicateResourceException;
+import com.autolot.autolotbackend.exception.InvalidLoginException;
 import com.autolot.autolotbackend.model.dto.AuthResponse;
 import com.autolot.autolotbackend.model.dto.LoginRequest;
 import com.autolot.autolotbackend.model.dto.SignupRequest;
@@ -29,10 +31,10 @@ public class AuthService {
     @Transactional
     public AuthResponse signup(SignupRequest request)  {
        if(dealershipRepository.existsByEmail(request.email())){
-           throw new RuntimeException("Email already exists");
+           throw new DuplicateResourceException("Dealership","email",request.email());
        }
        if(dealershipRepository.findBySlug(request.slug()).isPresent()){
-           throw new RuntimeException("Slug already taken");
+           throw new DuplicateResourceException("Dealership","Slug",request.slug());
        }
 
        Dealership dealership = Dealership.builder()
@@ -72,10 +74,10 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request){
         AdminUser adminUser = adminUserRepository.findByEmail(request.email())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidLoginException("Invalid email or password"));
 
         if(!passwordService.verifyPassword(request.password(), adminUser.getHashedPassword())){
-            throw new RuntimeException("Invalid email or password");
+            throw new InvalidLoginException("Invalid email or password");
         }
 
         String token = jwtUtil.generateToken(

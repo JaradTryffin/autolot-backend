@@ -64,8 +64,7 @@ public class Vehicle extends TenantScoped {
     @Column(columnDefinition = "text")
     private String description;
 
-    @Column(nullable = false)
-    private boolean featured = false;
+    private Boolean featured = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
