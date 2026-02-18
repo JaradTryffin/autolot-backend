@@ -1,6 +1,7 @@
 package com.autolot.autolotbackend.controller.admin;
 
-import com.autolot.autolotbackend.model.entity.Vehicle;
+import com.autolot.autolotbackend.model.dto.VehicleRequestDTO;
+import com.autolot.autolotbackend.model.dto.VehicleResponseDTO;
 import com.autolot.autolotbackend.service.vehicle.VehicleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,22 +17,22 @@ public class AdminVehicleController {
     private final VehicleService vehicleService;
 
     @PostMapping
-    public ResponseEntity<Vehicle> create(@RequestBody Vehicle vehicle){
-        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleService.createVehicle(vehicle));
+    public ResponseEntity<VehicleResponseDTO> create(@RequestBody VehicleRequestDTO vehicleRequestDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleService.createVehicle(vehicleRequestDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<Vehicle>> getAll(){
+    public ResponseEntity<List<VehicleResponseDTO>> getAll(){
         return ResponseEntity.ok(vehicleService.getAllVehicles());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicle> getById(@PathVariable String id){
+    public ResponseEntity<VehicleResponseDTO> getById(@PathVariable String id){
         return ResponseEntity.ok(vehicleService.getVehicleById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicle> update(@PathVariable String id, @RequestBody Vehicle vehicle){
+    public ResponseEntity<VehicleResponseDTO> update(@PathVariable String id, @RequestBody VehicleRequestDTO vehicle){
         return ResponseEntity.ok(vehicleService.updateVehicle(id, vehicle));
     }
 
