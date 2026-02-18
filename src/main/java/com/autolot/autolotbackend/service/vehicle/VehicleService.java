@@ -9,8 +9,11 @@ import com.autolot.autolotbackend.model.entity.VehicleStatus;
 import com.autolot.autolotbackend.repository.DealershipRepository;
 import com.autolot.autolotbackend.repository.VehicleRepository;
 import com.autolot.autolotbackend.tenant.TenantContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VehicleService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private final VehicleRepository vehicleRepository;
     private final DealershipRepository dealershipRepository;
 
@@ -34,9 +41,13 @@ public class VehicleService {
         return VehicleMapper.toDTO(vehicleRepository.save(vehicle));
     }
 
+    @Transactional
     public List<VehicleResponseDTO> getAllVehicles(){
-        // For now, fetch all - later the Hibernate tenant filter
-        // will auto-scope this to the current dealership
+        Session session = entityManager.unwrap(Session.class);
+
+        session.enableFilter("tenant_id")
+                .setParameter("tenant", TenantContext.getDealershipId());
+
         return vehicleRepository.findAll().stream()
                 .map(VehicleMapper::toDTO)
                 .toList();
